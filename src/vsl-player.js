@@ -422,6 +422,19 @@
           this.videoElement.currentTime = 0;
           this.videoElement.muted = false;
           this.hideOverlay("autoplay");
+
+          // Start progress save interval since video is already playing
+          if (this.config.saveProgress) {
+            console.log(
+              "VSLPlayer: Starting progress save interval from autoplay"
+            );
+            if (this.progressSaveInterval) {
+              clearInterval(this.progressSaveInterval);
+            }
+            this.progressSaveInterval = setInterval(() => {
+              this.saveProgress();
+            }, 1000);
+          }
         });
 
       // Click anywhere on autoplay overlay to unmute and restart
@@ -430,6 +443,19 @@
         this.videoElement.currentTime = 0;
         this.videoElement.muted = false;
         this.hideOverlay("autoplay");
+
+        // Start progress save interval since video is already playing
+        if (this.config.saveProgress) {
+          console.log(
+            "VSLPlayer: Starting progress save interval from autoplay"
+          );
+          if (this.progressSaveInterval) {
+            clearInterval(this.progressSaveInterval);
+          }
+          this.progressSaveInterval = setInterval(() => {
+            this.saveProgress();
+          }, 1000);
+        }
       });
 
       // Keyboard controls
@@ -453,11 +479,14 @@
       if (!this.config.saveProgress) return;
 
       const saved = this.getSavedProgress();
+      console.log("VSLPlayer: Checking saved progress", saved);
+
       if (
         saved &&
         saved.currentTime > 3 &&
         saved.currentTime < saved.duration * 0.95
       ) {
+        console.log("VSLPlayer: Showing resume overlay");
         this.showOverlay("resume");
         this.videoElement.currentTime = saved.currentTime;
       } else if (this.config.autoplay) {
@@ -522,6 +551,9 @@
     togglePlay() {
       if (this.videoElement.paused) {
         this.userHasInteracted = true;
+        console.log(
+          "VSLPlayer: User interaction detected, progress saving enabled"
+        );
         this.play();
       } else {
         this.pause();
@@ -551,9 +583,22 @@
 
       // Start progress save interval only if user has interacted
       if (this.config.saveProgress && this.userHasInteracted) {
+        console.log("VSLPlayer: Starting progress save interval");
+        // Clear any existing interval first
+        if (this.progressSaveInterval) {
+          clearInterval(this.progressSaveInterval);
+        }
+
         this.progressSaveInterval = setInterval(() => {
           this.saveProgress();
-        }, 5000);
+        }, 1000); // Save every 1 second
+      } else {
+        console.log(
+          "VSLPlayer: NOT saving progress - saveProgress:",
+          this.config.saveProgress,
+          "userHasInteracted:",
+          this.userHasInteracted
+        );
       }
 
       if (this.config.onPlay) {
@@ -856,6 +901,9 @@
 
       try {
         localStorage.setItem(this.storageKey, JSON.stringify(data));
+        console.log(
+          `VSLPlayer: Progress saved - ${Math.floor(data.currentTime)}s / ${Math.floor(data.duration)}s`
+        );
       } catch (e) {
         console.warn("Failed to save progress:", e);
       }
