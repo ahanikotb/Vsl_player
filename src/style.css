@@ -1,0 +1,704 @@
+/**
+ * VSL Player Styles
+ */
+
+:root {
+  --vsl-theme-color: #5a3fff;
+  --vsl-bg-dark: rgba(0, 0, 0, 0.9);
+  --vsl-bg-semi: rgba(0, 0, 0, 0.6);
+  --vsl-text-primary: #ffffff;
+  --vsl-text-secondary: rgba(255, 255, 255, 0.8);
+}
+
+/* Container */
+.vsl-player-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  background: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Helvetica", "Arial", sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.vsl-player-container * {
+  box-sizing: border-box;
+}
+
+.vsl-player-wrapper {
+  position: relative;
+  width: 100%;
+  background: transparent;
+  display: block;
+  line-height: 0;
+}
+
+/* Video Element */
+.vsl-video {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #000;
+  line-height: 0;
+  cursor: pointer;
+}
+
+/* Centered Play/Pause Button */
+.vsl-center-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: var(--vsl-theme-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 50;
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease;
+  pointer-events: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: none;
+}
+
+.vsl-center-play-btn.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vsl-center-play-btn:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.vsl-center-play-btn:active {
+  transform: translate(-50%, -50%) scale(0.95);
+}
+
+.vsl-center-play-btn svg {
+  width: 36px;
+  height: 36px;
+  fill: #ffffff;
+  color: #ffffff;
+}
+
+/* Always show only play icon, never pause icon */
+.vsl-center-pause-icon {
+  display: none !important;
+}
+
+/* Show center play button only when video is paused */
+.vsl-player-container:not(.playing) .vsl-center-play-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* On hover, only show if paused */
+.vsl-player-container:not(.playing):hover .vsl-center-play-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hide center play button when playing (even on hover) */
+.vsl-player-container.playing .vsl-center-play-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Overlays */
+.vsl-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--vsl-theme-color) 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
+}
+
+.vsl-overlay[style*="display: flex"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Make autoplay overlay transparent with centered content box */
+.vsl-autoplay-overlay {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  cursor: pointer;
+}
+
+/* Remove the full-screen background */
+.vsl-autoplay-overlay::before {
+  display: none;
+}
+
+/* Style the content box to be a centered card */
+.vsl-autoplay-overlay .vsl-overlay-content {
+  background: linear-gradient(
+    135deg,
+    var(--vsl-theme-color) 0%,
+    color-mix(in srgb, var(--vsl-theme-color) 70%, #764ba2) 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 40px 50px;
+  max-width: 500px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.vsl-overlay-content {
+  text-align: center;
+  padding: 40px;
+  max-width: 600px;
+  position: relative;
+  z-index: 1;
+}
+
+.vsl-overlay-title {
+  color: var(--vsl-text-primary);
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 40px 0;
+  line-height: 1.3;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Smaller title for autoplay overlay */
+.vsl-autoplay-overlay .vsl-overlay-title {
+  font-size: 24px;
+  margin: 0 0 24px 0;
+}
+
+.vsl-overlay-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.vsl-overlay-btn {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: var(--vsl-text-primary);
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 500;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+  min-width: 220px;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Simpler button for autoplay overlay */
+.vsl-autoplay-overlay .vsl-overlay-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 18px;
+  min-width: auto;
+  box-shadow: none;
+  font-weight: 600;
+  cursor: default;
+  pointer-events: none;
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+.vsl-autoplay-overlay .vsl-overlay-btn:hover {
+  background: transparent;
+  border: none;
+  transform: none;
+}
+
+.vsl-overlay-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.vsl-autoplay-overlay .vsl-overlay-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.vsl-overlay-btn:active {
+  transform: translateY(0);
+}
+
+.vsl-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.vsl-icon-large {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+}
+
+/* Smaller icon for autoplay overlay */
+.vsl-autoplay-overlay .vsl-icon-large {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+}
+
+/* Muted Icon Animation */
+.vsl-muted-icon {
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Make autoplay overlay icon white */
+.vsl-autoplay-overlay .vsl-muted-icon svg,
+.vsl-autoplay-overlay .vsl-icon-large {
+  color: #ffffff;
+  stroke: #ffffff;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Error Overlay */
+.vsl-error-overlay {
+  background: var(--vsl-bg-dark);
+}
+
+.vsl-error-title {
+  color: #ff4444;
+  margin-bottom: 16px;
+}
+
+.vsl-error-message {
+  color: var(--vsl-text-secondary);
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Progress Bar */
+.vsl-progress-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition:
+    height 0.2s,
+    opacity 0.3s ease,
+    bottom 0.3s ease;
+  opacity: 1;
+  z-index: 9;
+}
+
+/* When hovering and controls are visible, progress bar moves up above controls */
+.vsl-player-container:hover
+  .vsl-controls:not([style*="display: none"])
+  ~ .vsl-progress-container {
+  bottom: 60px;
+}
+
+/* When controls are hidden, progress bar stays at bottom */
+.vsl-controls[style*="display: none"] ~ .vsl-progress-container,
+.vsl-player-container:has(.vsl-controls:empty) .vsl-progress-container {
+  bottom: 0;
+}
+
+.vsl-progress-container:hover {
+  height: 12px;
+}
+
+.vsl-progress-buffered {
+  display: none;
+}
+
+.vsl-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--vsl-theme-color);
+  width: 0;
+  transition: width 0.3s ease-out;
+  z-index: 1;
+}
+
+/* Controls */
+.vsl-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--vsl-bg-semi);
+  color: var(--vsl-text-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Hide controls completely if no volume or fullscreen controls */
+.vsl-controls:not(
+    :has(.vsl-volume-control[style*="flex"]):not(
+        :has(.vsl-fullscreen-btn:not([style*="none"]))
+      )
+  ) {
+  display: none;
+}
+
+.vsl-player-container:hover .vsl-controls {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Hide play button in controls bar */
+.vsl-controls .vsl-play-btn {
+  display: none;
+}
+
+.vsl-controls-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vsl-control-btn {
+  background: none;
+  border: none;
+  color: var(--vsl-text-primary);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.vsl-control-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--vsl-theme-color);
+}
+
+.vsl-control-btn:active {
+  transform: scale(0.95);
+}
+
+.vsl-control-btn:focus {
+  outline: 2px solid var(--vsl-theme-color);
+  outline-offset: 2px;
+}
+
+/* Time Display */
+.vsl-time-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vsl-text-secondary);
+  white-space: nowrap;
+}
+
+.vsl-time-separator {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Volume Control */
+.vsl-volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vsl-volume-slider {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.vsl-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--vsl-theme-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vsl-volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--vsl-theme-color);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vsl-volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.vsl-volume-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Fullscreen Styles */
+.vsl-player-container.vsl-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: #000;
+}
+
+.vsl-player-container.vsl-fullscreen .vsl-player-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vsl-player-container.vsl-fullscreen .vsl-video {
+  max-height: 100vh;
+  width: auto;
+  max-width: 100vw;
+}
+
+.vsl-player-container.vsl-fullscreen .vsl-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.vsl-player-container.vsl-fullscreen .vsl-progress-container {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+}
+
+/* Ensure controls show on hover in fullscreen */
+.vsl-player-container.vsl-fullscreen:hover .vsl-controls,
+.vsl-player-container.vsl-fullscreen:hover .vsl-progress-container {
+  opacity: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  /* On mobile, show controls when video wrapper is tapped */
+  .vsl-player-wrapper.vsl-show-controls ~ .vsl-progress-container,
+  .vsl-player-wrapper.vsl-show-controls ~ .vsl-controls {
+    opacity: 1;
+  }
+
+  .vsl-overlay-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .vsl-autoplay-overlay .vsl-overlay-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .vsl-overlay-content {
+    padding: 24px;
+  }
+
+  .vsl-autoplay-overlay .vsl-overlay-content {
+    padding: 30px 24px;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  .vsl-overlay-btn {
+    font-size: 16px;
+    padding: 14px 24px;
+    min-width: 180px;
+  }
+
+  .vsl-autoplay-overlay .vsl-overlay-btn {
+    font-size: 15px;
+    padding: 12px 24px;
+  }
+
+  .vsl-overlay-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .vsl-icon-large {
+    width: 60px;
+    height: 60px;
+  }
+
+  .vsl-controls {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .vsl-control-btn {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 6px;
+  }
+
+  .vsl-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .vsl-time-display {
+    font-size: 12px;
+  }
+
+  .vsl-volume-slider {
+    width: 60px;
+  }
+}
+
+/* Mobile Portrait Fullscreen */
+@media (max-width: 768px) and (orientation: portrait) {
+  .vsl-player-container.vsl-fullscreen .vsl-video {
+    width: 100vw;
+    height: auto;
+    max-height: 100vh;
+  }
+}
+
+/* Tablet and Desktop */
+@media (min-width: 769px) {
+  .vsl-progress-container:hover {
+    height: 12px;
+  }
+
+  .vsl-controls:hover .vsl-control-btn {
+    opacity: 1;
+  }
+}
+
+/* Loading Spinner (optional) */
+.vsl-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--vsl-theme-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 50;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Accessibility */
+.vsl-control-btn:focus-visible {
+  outline: 2px solid var(--vsl-theme-color);
+  outline-offset: 2px;
+}
+
+.vsl-overlay-btn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* Hide default media controls on iOS */
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+/* Prevent text selection on controls */
+.vsl-controls,
+.vsl-overlay-btn,
+.vsl-control-btn {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Smooth transitions */
+.vsl-video,
+.vsl-overlay,
+.vsl-control-btn,
+.vsl-overlay-btn {
+  transition: all 0.3s ease;
+}
+
+/* Print styles */
+@media print {
+  .vsl-player-container {
+    display: none;
+  }
+}
+.vsl-unmute-btn {
+  text-align: center;
+}
